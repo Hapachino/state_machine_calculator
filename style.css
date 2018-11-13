@@ -1,8 +1,12 @@
 :root {
   --display-height: 20%;
-  --border: 3px solid lightgrey;
+  --border: 4px solid lightgrey;
+  --border-radius: 7.5px;
+  --calculator-shadow: 1px 1px 10px 0 rgba(0, 0, 0, 0.75);
   --calculator-background: lightgrey;
   --button-color: darkgrey;
+  --clear-button-color: cornflowerblue;
+  --operator-button-color: darkorange;
 }
 
 *,
@@ -21,24 +25,26 @@ body {
   width: 100vw;
 }
 
+.calculator, .calculator * {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .calculator {
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
   height: 60vh;
   border: var(--border);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   background-color: var(--calculator-background);
-}
-
-.calculator, .calculator * {
-  padding-left: 0;
-  padding-right: 0;
+  box-shadow: var(--calculator-shadow);
 }
 
 .display {
   height: var(--display-height);
   border: var(--border);
+  border-radius: var(--border-radius);
   background-color: black;
 }
 
@@ -48,25 +54,26 @@ body {
 
 .buttons-container > * {
   height: 100%;
-}
-
-.right-container > .button:last-child {
-  height: 40%;
-}
-
-.left-container > .clear, .left-container > .clear-entry {
-  background-color: cornflowerblue;
-}
-
-.right-container > .button {
-  background-color: orange;
+  background-color: var(--calculator-background);
 }
 
 .button {
   height: 20%;
   background-color: var(--button-color);
   border: var(--border);
-  border-radius: 7.5px;
+  border-radius: var(--border-radius);
+}
+
+.clear, .clear-entry {
+  background-color: var(--clear-button-color);
+}
+
+.right-container > .button:last-child {
+  height: 40%;
+}
+
+.right-container > .button {
+  background-color: var(--operator-button-color);
 }
 
 .center {
