@@ -1,0 +1,66 @@
+:root {
+  --display-height: 20%;
+  --border: 3px solid lightgrey;
+  --button-color: darkgrey;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-size: 25px;
+}
+
+.calculator {
+  height: 60vh;
+  margin-top: 7.5%;
+  border: var(--border);
+  border-radius: 5px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.calculator * {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.display {
+  height: var(--display-height);
+  border: var(--border);
+  background-color: black;
+}
+
+.buttons {
+  height: calc(100% - var(--display-height));
+}
+
+.left-container, .right-container {
+  height: 100%;
+}
+
+.left-container > .button, .right-container > .button {
+  height: 20%;
+  background-color: var(--button-color);
+  border: var(--border);
+}
+
+.right-container > .button:last-child {
+  height: 40%;
+}
+
+.left-container > .blue {
+  background-color: cornflowerblue;
+}
+
+.right-container > .button {
+  background-color: orange;
+}
+
+.center {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
