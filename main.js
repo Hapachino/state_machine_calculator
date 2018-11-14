@@ -1,6 +1,10 @@
+$(document).ready(() => {
+  displayResult();
+  addButtonHandlers();
+});
+
 const operators = '+-*/';
 
-// clears handled in updateModel()
 const states = {
   start(input) {
     switch(model.inputType) {
@@ -21,7 +25,7 @@ const states = {
         model.state = states.compute;
         break;
       case '=':
-        calculate(model.operator);
+        if (!calculate(model.operator)) return;
         model.state = states.start;
         break;
     }
@@ -42,13 +46,29 @@ const states = {
         model.state = states.compute;
         break;
       case '=':
-        calculate(model.operator);
+        if (!calculate(model.operator)) return;
         model.state = states.start;
         break;
     }
   },
   float(input) {
-    
+    switch (model.inputType) {
+      case '0':
+      case 'non-zero digit':
+        model.result += input;
+        break;
+      case '.':
+        break;
+      case 'operator':
+        model.operator = input;
+        model.operand = model.result;
+        model.state = states.compute;
+        break;
+      case '=':
+        if (!calculate(model.operator)) return;
+        model.state = states.start;
+        break;
+    }
   }, 
   compute(input) {
     switch (model.inputType) {
@@ -69,13 +89,13 @@ const states = {
         model.operand = model.result;
         break;
       case '=':
-        calculate(input);
+        if (!calculate(model.operator)) return;
         model.state = states.start;
         break;
     }
   },
-  error(input) {
-
+  error() {
+    return;
   }
 }
 
@@ -102,12 +122,19 @@ function calculate(input) {
       model.result *= model.operand;
       break;
     case '/':
+      if (model.result === 0) {
+        model.result = 'Error';
+        model.state = states.error;
+        return false;
+      }
       model.result = model.operand / model.result;
       break;
   }
 
   model.result += '';
   model.operand += '';
+
+  return true;
 }
 
 function addButtonHandlers() {
@@ -115,7 +142,7 @@ function addButtonHandlers() {
     const target = $(e.currentTarget);
     const isOperator = target.hasClass('operator');
     const input = isOperator ? target.attr('data-key') : target.find('.center').text();
-    // console.log(input);
+
     updateModel(input);
   })
 }
@@ -134,9 +161,6 @@ function updateModel(input) {
   updateInputType(input);
   model.state(input);
 
-  // console.log('state:', model.state);
-  console.log('result:', model.result);
-  console.log('operand:', model.operand);
   displayResult();
 }
 
@@ -153,8 +177,3 @@ function updateInputType(input) {
 function displayResult() {
   $('.display-container').text(model.result);
 }
-
-$(document).ready(() => {
-  displayResult();
-  addButtonHandlers();
-});
