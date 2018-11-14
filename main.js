@@ -1,8 +1,6 @@
-const operators = '+=*/';
+const operators = '+-*/';
 
-
-
-// clears handled elsewhere
+// clears handled in updateModel()
 const states = {
   start(input) {
     switch(model.inputType) {
@@ -18,11 +16,12 @@ const states = {
         model.state = states.float;
         break;
       case 'operator':
-        model.result = input;
+        model.operator = input;
+        model.operand = model.result;
         model.state = states.compute;
         break;
       case '=':
-        calculate(input);
+        calculate(model.operator);
         model.state = states.start;
         break;
     }
@@ -31,24 +30,49 @@ const states = {
     switch (model.inputType) {
       case '0':
       case 'non-zero digit':
+        model.result += input;
+        break;
       case '.':
-        model.result = input;
+        model.result += input;
+        model.state = states.float;
         break;
       case 'operator':
-        model.operand = result;
+        model.operator = input;
+        model.operand = model.result;
         model.state = states.compute;
+        break;
+      case '=':
+        calculate(model.operator);
+        model.state = states.start;
+        break;
+    }
+  },
+  float(input) {
+    
+  }, 
+  compute(input) {
+    switch (model.inputType) {
+      case '0':
+        model.result = '0';
+        model.state = states.start;
+        break;
+      case 'non-zero digit':
+        model.result = input;
+        model.state = states.integer;
+        break;
+      case '.':
+        model.result = input;
+        model.state = states.float;
+        break;
+      case 'operator':
+        model.operator = input;
+        model.operand = model.result;
         break;
       case '=':
         calculate(input);
         model.state = states.start;
         break;
     }
-  },
-  float(input) {
-
-  }, 
-  compute(input) {
-
   },
   error(input) {
 
@@ -64,6 +88,9 @@ const model = {
 }
 
 function calculate(input) {
+  model.result = +model.result;
+  model.operand = +model.operand;
+
   switch (input) {
     case '+':
       model.result += model.operand;
@@ -79,7 +106,8 @@ function calculate(input) {
       break;
   }
 
-  model.operand = 0;
+  model.result += '';
+  model.operand += '';
 }
 
 function addButtonHandlers() {
@@ -87,7 +115,7 @@ function addButtonHandlers() {
     const target = $(e.currentTarget);
     const isOperator = target.hasClass('operator');
     const input = isOperator ? target.attr('data-key') : target.find('.center').text();
-    console.log(input);
+    // console.log(input);
     updateModel(input);
   })
 }
@@ -106,6 +134,9 @@ function updateModel(input) {
   updateInputType(input);
   model.state(input);
 
+  // console.log('state:', model.state);
+  console.log('result:', model.result);
+  console.log('operand:', model.operand);
   displayResult();
 }
 
