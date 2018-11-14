@@ -1,115 +1,129 @@
-const model = {
-  previousInputs: [],
-  operand: null,
-  operator: null,
-  result: 0,
-  operations: {
-    add() {
-      model.result += model.operand;
-    },
+const operators = '+=*/';
+
+
+
+// clears handled elsewhere
+const states = {
+  start(input) {
+    switch(model.inputType) {
+      case '0':
+        model.result = '0';
+        break;
+      case 'non-zero digit':
+        model.result = input;
+        model.state = states.integer;
+        break;
+      case '.':
+        model.result = input;
+        model.state = states.float;
+        break;
+      case 'operator':
+        model.result = input;
+        model.state = states.compute;
+        break;
+      case '=':
+        calculate(input);
+        model.state = states.start;
+        break;
+    }
+  },
+  integer(input) {
+    switch (model.inputType) {
+      case '0':
+      case 'non-zero digit':
+      case '.':
+        model.result = input;
+        break;
+      case 'operator':
+        model.operand = result;
+        model.state = states.compute;
+        break;
+      case '=':
+        calculate(input);
+        model.state = states.start;
+        break;
+    }
+  },
+  float(input) {
+
+  }, 
+  compute(input) {
 
   },
-  update(input) {
-    const 
-    // determine input type
-    if (isN)
-  },
+  error(input) {
 
-  storeInput(input) {
-    if (result === 0) {
-
-    }
-    
-    const lastIndex = this.previousInputs.length - 1;
-
-    // ie: last = '+', input = 1
-    if (isNaN(this.previousInputs[lastIndex]) && !isNaN(input)) {
-      this.previousInputs.push(input);
-    }
-
-    // ie: last = '1', input = 1
-    if (!isNaN(this.previousInputs[lastIndex]) && !isNaN(input)) {
-      this.previousInputs[lastIndex] += input;
-    }
-
-    // ie: last = '1', input = +
-    if (!isNaN(this.previousInputs[lastIndex]) && !isNaN(input)) {
-      this.previousInputs.push(input);
-    }
-
-    // ie: last = '*', input = +
-    if (isNaN(this.previousInputs[lastIndex]) && isNaN(input)) {
-      this.previousInputs.push(input);
-      // additional cases: '.', '*' '=', 
-    }
-
-    // update previousInputs
-    // update other variables
-  },
-  returnResult() {
-    return this.result;
-  },
-
-}
-
-const controller = {
-  addButtonHandlers() {
-    $('.button').click((e) => {
-      const target = $(e.currentTarget);
-      const isOperator = target.hasClass('operator');
-      let input;
-
-      if (isOperator) {
-        input = target.attr('key');
-      } else {
-        input = target.find('.center').text();
-      }
-
-      model.storeInput(input);
-    })
-  },
-  updateOutput() {
-    const result = model.returnResult();
-    view.displayOutput(result);
   }
 }
 
-const view = {
-  displayOutput(output) {
-    $('.display-container').text(output);
-  },
+const model = {
+  state: states.start,
+  result: 0,
+  operator: null,
+  operand: null,
+  inputType: null,
 }
 
-/* remove */
+function calculate(input) {
+  switch (input) {
+    case '+':
+      model.result += model.operand;
+      break;
+    case '-':
+      model.result += -(model.operand);
+      break;
+    case '*':
+      model.result *= model.operand;
+      break;
+    case '/':
+      model.result = model.operand / model.result;
+      break;
+  }
+
+  model.operand = 0;
+}
+
+function addButtonHandlers() {
+  $('.button').click((e) => {
+    const target = $(e.currentTarget);
+    const isOperator = target.hasClass('operator');
+    const input = isOperator ? target.attr('data-key') : target.find('.center').text();
+    console.log(input);
+    updateModel(input);
+  })
+}
+
+function updateModel(input) {
+  if (input === 'c') {
+    model.state = states.start;
+    model.result = 0;
+    model.operator = null;
+    model.operand = null;
+  } else if (input === 'ce') {
+    model.state = states.start;
+    model.result = 0;
+  }
+
+  updateInputType(input);
+  model.state(input);
+
+  displayResult();
+}
+
+function updateInputType(input) {
+  if (input.match(/[1-9]/)) {
+    model.inputType = 'non-zero digit';
+  } else if (operators.includes(input)) {
+    model.inputType = 'operator';
+  } else {
+    model.inputType = input;
+  }
+}
+
+function displayResult() {
+  $('.display-container').text(model.result);
+}
+
 $(document).ready(() => {
-  controller.updateOutput();
-  controller.addButtonHandlers();
+  displayResult();
+  addButtonHandlers();
 });
-
-
-
-/**
- * Stores user inputs in array
- * @param { array } previousInputs 
- * @param { number/operator } currentInput
- */
-
-/**
- * Updates current user output
- * 
- */
-
-/**
- * updates operand1, operand2, operator
- * 
- */
-
-/**
- * detects use case and performs calculation
- * 
- */
-
-/**
- * 
- * 
- */

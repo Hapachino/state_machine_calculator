@@ -76,7 +76,11 @@ body {
   border-radius: var(--border-radius);
 }
 
-[key=clear], [key=clear-entry] {
+.button:hover {
+  cursor: pointer;
+}
+
+[data-key=c], [data-key=ce] {
   background-color: var(--clear-button-color);
 }
 
