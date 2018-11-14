@@ -95,7 +95,6 @@ const states = {
     }
   },
   error() {
-    return;
   }
 }
 
@@ -103,6 +102,7 @@ const model = {
   state: states.start,
   result: 0,
   operator: null,
+  previousOperator: null,
   operand: null,
   inputType: null,
 }
@@ -127,13 +127,19 @@ function calculate(input) {
         model.state = states.error;
         return false;
       }
-      model.result = model.operand / model.result;
+
+      if (model.state === states.start && model.previousOperator === '/') {
+        model.result = model.result / model.operand;
+      } else {
+        [model.result, model.operand] = [model.operand / model.result, model.result];
+      }
+
       break;
   }
 
+  model.previousOperator = model.operator;
   model.result += '';
   model.operand += '';
-
   return true;
 }
 
