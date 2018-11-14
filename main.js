@@ -1,7 +1,4 @@
-$(document).ready(() => {
-  displayResult();
-  addButtonHandlers();
-});
+$(document).ready(addButtonHandlers);
 
 const operators = '+-*/';
 
@@ -34,10 +31,10 @@ const states = {
     switch (model.inputType) {
       case '0':
       case 'non-zero digit':
-        model.result += input;
+        appendDigit(input);
         break;
       case '.':
-        model.result += input;
+        appendDigit(input);
         model.state = states.float;
         break;
       case 'operator':
@@ -55,7 +52,7 @@ const states = {
     switch (model.inputType) {
       case '0':
       case 'non-zero digit':
-        model.result += input;
+        appendDigit(input);
         break;
       case '.':
         break;
@@ -107,6 +104,14 @@ const model = {
   inputType: null,
 }
 
+const MAX_DISPLAY_LENGTH = 10;
+
+function appendDigit(input) {
+  if (model.result.length >= MAX_DISPLAY_LENGTH) return;
+
+  model.result += input;
+}
+
 function calculate(input) {
   model.result = +model.result;
   model.operand = +model.operand;
@@ -140,6 +145,11 @@ function calculate(input) {
   model.previousOperator = model.operator;
   model.result += '';
   model.operand += '';
+
+  if (model.result.length >= MAX_DISPLAY_LENGTH) {
+    toExponential(MAX_DISPLAY_LENGTH - 5);
+  }
+
   return true;
 }
 
@@ -167,7 +177,7 @@ function updateModel(input) {
   updateInputType(input);
   model.state(input);
 
-  displayResult();
+  updateDisplay();
 }
 
 function updateInputType(input) {
@@ -180,6 +190,17 @@ function updateInputType(input) {
   }
 }
 
-function displayResult() {
+function toExponential(fraction) {
+  model.result = Number.parseFloat(model.result).toExponential(fraction);
+}
+
+function updateDisplay() {
   $('.display-container').text(model.result);
 }
+
+// TODO:
+// overflow
+  // calculate() detect length
+    // if length === max, don't append
+    // updateDisplay - scientific notation
+// button feedback

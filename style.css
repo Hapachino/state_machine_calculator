@@ -1,6 +1,6 @@
 :root {
   --display-height: 20%;
-  --display-font-size: 8vh;
+  --display-font-size: 7vh;
   --border: 4px solid lightgrey;
   --border-radius: 7.5px;
   --calculator-shadow: 1px 1px 10px 0 rgba(0, 0, 0, 0.75);
@@ -74,6 +74,7 @@ body {
   background-color: var(--button-color);
   border: var(--border);
   border-radius: var(--border-radius);
+  user-select: none;
 }
 
 .button:hover {
