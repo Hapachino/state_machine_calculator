@@ -1,5 +1,6 @@
 :root {
   --display-height: 20%;
+  --display-font-size: 8vh;
   --border: 4px solid lightgrey;
   --border-radius: 7.5px;
   --calculator-shadow: 1px 1px 10px 0 rgba(0, 0, 0, 0.75);
@@ -48,6 +49,17 @@ body {
   background-color: black;
 }
 
+.display-container {
+  padding: 0 1rem;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  color: white;
+  font-size: var(--display-font-size);
+  text-align: right;
+}
+
 .buttons-container {
   height: calc(100% - var(--display-height));
 }
@@ -64,7 +76,7 @@ body {
   border-radius: var(--border-radius);
 }
 
-.clear, .clear-entry {
+[key=clear], [key=clear-entry] {
   background-color: var(--clear-button-color);
 }
 

@@ -2,17 +2,21 @@
 <head>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="style.css">
+  <script src="jquery-3.3.1.min.js"></script>
+  <script src="main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
   <div class="calculator col-xs-12 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
 
-    <div class="display col-xs-12"></div>
-    <div class="buttons-container col-xs-12">
+    <div class="display col-xs-12">
+      <div class="display-container"></div>
+    </div>
 
+    <div class="buttons-container col-xs-12">
       <div class="left-container col-xs-8">
-        <div class="button clear col-xs-6"><div class="center">C</div></div>
-        <div class="button clear-entry col-xs-6"><div class="center">CE</div></div>
+        <div key="clear" class="button col-xs-6 operator"><div class="center">C</div></div>
+        <div key="clear-entry" class="button col-xs-6 operator"><div class="center">CE</div></div>
         <div class="button col-xs-4"><div class="center">7</div></div>
         <div class="button col-xs-4"><div class="center">8</div></div>
         <div class="button col-xs-4"><div class="center">9</div></div>
@@ -25,18 +29,17 @@
         <div class="button col-xs-4"><div class="center">2</div></div>
         <div class="button col-xs-4"><div class="center">3</div></div>
         
-        <div class="button col-xs-4"><div class="center">&middot;</div></div>
+        <div key="decimal" class="button col-xs-4 operator"><div class="center">&middot;</div></div>
         <div class="button col-xs-4"><div class="center">0</div></div>
-        <div class="button col-xs-4"><div class="center">&equals;</div></div>
+        <div key="equal" class="button col-xs-4 operator"><div class="center">&equals;</div></div>
       </div>
 
       <div class="right-container col-xs-4">
-        <div class="button col-xs-12"><div class="center">&divide;</div></div>
-        <div class="button col-xs-12"><div class="center">&times;</div></div>
-        <div class="button col-xs-12"><div class="center">&minus;</div></div>
-        <div class="button col-xs-12"><div class="center">&plus;</div></div>
+        <div key="divide" class="button col-xs-12 operator"><div class="center">&divide;</div></div>
+        <div key="times" class="button col-xs-12 operator"><div class="center">&times;</div></div>
+        <div key="minus" class="button col-xs-12 operator"><div class="center">&minus;</div></div>
+        <div key="plus" class="button col-xs-12 operator"><div class="center">&plus;</div></div>
       </div>
-      
     </div>
 
   </div>
