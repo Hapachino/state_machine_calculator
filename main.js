@@ -1,74 +1,86 @@
 $(document).ready(addButtonHandlers);
 
 const operators = '+-*/';
+const MAX_DISPLAY_LENGTH = 10;
+const FRACTION = 6;
 
 const states = {
-  start(input) {
-    switch(model.inputType) {
+  equal(input) {
+    switch (model.inputType) {
       case '0':
+        model.accumulator = input;
         break;
-      case 'non-zero digit':
-
-        break;
+      case '[1-9]':
       case '.':
-
+        model.accumulator = input;
+        model.state = states.accumulator;
         break;
-      case 'operator':
-
+      case '[+-*/]':
+        model.operator = input;
+        model.operand = model.accumulator;
+        model.state = states.operator;
         break;
       case '=':
-
+        calculate();
         break;
     }
   },
-  integer(input) {
+  accumulator(input) {
     switch (model.inputType) {
       case '0':
-      case 'non-zero digit':
-
+      case '[1-9]':
+        model.accumulator += input;
         break;
       case '.':
-
+        if (canAppend(model.accumulator)) model.accumulator += input;
         break;
-      case 'operator':
-
+      case '[+-*/]':
+        model.operator = input;
+        model.operand = model.accumulator;
+        model.state = states.operator;
         break;
       case '=':
-
+        model.state = states.equal;
+        calculate();
         break;
     }
   },
-  float(input) {
+  operator(input) {
     switch (model.inputType) {
       case '0':
-      case 'non-zero digit':
-
+      case '[1-9]':
       case '.':
+        model.operand = input;
+        model.state = states.operand;
         break;
-      case 'operator':
-
+      case '[+-*/]':
+        model.operator = input;
         break;
       case '=':
-
+        calculate();
+        model.operand = model.accumulator;
         break;
     }
-  }, 
-  compute(input) {
+  },
+  operand(input) {
     switch (model.inputType) {
       case '0':
-
+        if (model.operand) model.operand += input;
         break;
-      case 'non-zero digit':
-
-        break;
+      case '[1-9]':
+        model.operand += input;
       case '.':
-
+        if (canAppend(model.operand)) model.operand += input;
         break;
-      case 'operator':
-
+      case '[+-*/]':
+        model.state = states.operator;
+        calculate();
+        model.operator = input;
+        model.operand = model.accumulator;
         break;
       case '=':
-
+        model.state = states.equal;
+        calculate();
         break;
     }
   },
@@ -77,44 +89,45 @@ const states = {
 }
 
 const model = {
-  state: states.start,
-  result: 0,
+  state: states.equal,
+  accumulator: 0,
+  operand: 0,
   operator: null,
-  operand: null,
   inputType: null,
 }
 
-const MAX_DISPLAY_LENGTH = 10;
-
-function appendDigit(input) {
-  if (model.result.length >= MAX_DISPLAY_LENGTH) return;
-
-  model.result += input;
+function ExceedMaxDisplayWidth(number) {
+  const string = number + '';
+  return string.length >= MAX_DISPLAY_LENGTH;
 }
 
-function calculate(input) {
-  model.result = +model.result;
+function canAppend(number) {
+  return !ExceedMaxDisplayWidth(number) && !number.includes('.');
+}
+
+function calculate() {
+  model.accumulator = +model.accumulator;
   model.operand = +model.operand;
 
-  switch (input) {
+  switch (model.operator) {
     case '+':
+      model.accumulator += model.operand;
       break;
     case '-':
+      model.accumulator -= model.operand;
       break;
     case '*':
+      model.accumulator *= model.operand;
       break;
     case '/':
+      if (model.operand === 0) {
+        model.state = states.error;
+        return;
+      }
+
+      model.accumulator /= model.operand;
       break;
   }
-
-  model.result += '';
-  model.operand += '';
-
-  if (model.result.length >= MAX_DISPLAY_LENGTH) {
-    toExponential(MAX_DISPLAY_LENGTH - 6);
-  }
-
-  return true;
 }
 
 function addButtonHandlers() {
@@ -129,41 +142,55 @@ function addButtonHandlers() {
 
 function updateModel(input) {
   if (input === 'c') {
-    model.state = states.start;
-    model.result = 0;
+    model.state = states.equal;
+    model.accumulator = 0;
+    model.operand = 0;
     model.operator = null;
-    model.operand = null;
   } else if (input === 'ce') {
-    model.state = states.start;
-    model.result = 0;
+    model.state = states.equal;
+    model.accumulator = 0;
   }
 
   updateInputType(input);
   model.state(input);
-
-  
-  console.log('result:', model.result);
-  console.log('operand:', model.operand);
+  updateDisplay();
 }
 
 function updateInputType(input) {
   if (input.match(/[1-9]/)) {
-    model.inputType = 'non-zero digit';
+    model.inputType = '[1-9]';
   } else if (operators.includes(input)) {
-    model.inputType = 'operator';
+    model.inputType = '[+-*/]';
   } else {
     model.inputType = input;
   }
 }
 
-function toExponential(fraction) {
-  model.result = Number.parseFloat(model.result).toExponential(fraction);
+function toExponential(number, fraction) {
+  return Number.parseFloat(number).toExponential(fraction);
 }
 
 function updateDisplay() {
-  $('.display-container').text(model.result);
+  if (ExceedMaxDisplayWidth(model.accumulator)) {
+    model.accumulator = toExponential(model.accumulator, FRACTION);
+  }
+
+  let output;
+
+  if (model.state === states.error) {
+    output = 'ERROR';
+  } else {
+    output = model.state === states.operand ? model.operand : model.accumulator;
+  }
+
+  console.log('accumulator', model.accumulator);
+  console.log('operator', model.operator);
+  console.log('operand', model.operand);
+
+  $('.display-container').text(output);
 }
 
 // TODO:
+// handle infinity
 // overflow - change max display based on screen width
-// button feedback
+// graphing

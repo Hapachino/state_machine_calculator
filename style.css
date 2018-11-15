@@ -77,6 +77,10 @@ body {
   user-select: none;
 }
 
+.button:active {
+  box-shadow: inset 0 0 30px 10px rgba(0,0,0,0.25);
+}
+
 .button:hover {
   cursor: pointer;
 }
