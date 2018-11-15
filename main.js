@@ -68,7 +68,8 @@ const states = {
         if (model.operand) model.operand += input;
         break;
       case '[1-9]':
-        model.operand += input;
+        model.operand ? model.operand += input : model.operand = input;
+        break;
       case '.':
         if (canAppend(model.operand)) model.operand += input;
         break;
@@ -141,18 +142,20 @@ function addButtonHandlers() {
 }
 
 function updateModel(input) {
+  debugger;
   if (input === 'c') {
     model.state = states.equal;
     model.accumulator = 0;
     model.operand = 0;
     model.operator = null;
   } else if (input === 'ce') {
-    model.state = states.equal;
-    model.accumulator = 0;
+    model.operand = 0;
+    model.state = states.operand;
+  } else {
+    updateInputType(input);
+    model.state(input);
   }
 
-  updateInputType(input);
-  model.state(input);
   updateDisplay();
 }
 
@@ -182,10 +185,6 @@ function updateDisplay() {
   } else {
     output = model.state === states.operand ? model.operand : model.accumulator;
   }
-
-  console.log('accumulator', model.accumulator);
-  console.log('operator', model.operator);
-  console.log('operand', model.operand);
 
   $('.display-container').text(output);
 }
