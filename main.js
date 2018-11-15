@@ -39,6 +39,10 @@ const states = {
         break;
       case 'operator':
         model.operator = input;
+        if (model.operand) {
+          debugger;
+          if (!calculate(model.operator)) return;
+        }
         model.operand = model.result;
         model.state = states.compute;
         break;
@@ -58,6 +62,9 @@ const states = {
         break;
       case 'operator':
         model.operator = input;
+        if (model.operand) {
+          if (!calculate(model.operator)) return;
+        }
         model.operand = model.result;
         model.state = states.compute;
         break;
@@ -147,7 +154,7 @@ function calculate(input) {
   model.operand += '';
 
   if (model.result.length >= MAX_DISPLAY_LENGTH) {
-    toExponential(MAX_DISPLAY_LENGTH - 5);
+    toExponential(MAX_DISPLAY_LENGTH - 6);
   }
 
   return true;
@@ -178,6 +185,8 @@ function updateModel(input) {
   model.state(input);
 
   updateDisplay();
+  console.log('result:', model.result);
+  console.log('operand:', model.operand);
 }
 
 function updateInputType(input) {
@@ -199,8 +208,9 @@ function updateDisplay() {
 }
 
 // TODO:
-// overflow
-  // calculate() detect length
-    // if length === max, don't append
-    // updateDisplay - scientific notation
+// divide then times
+// multiple equal after times
+// multiple equal after divide
+// refactor calculate after operator 
+// overflow - change max display based on screen width
 // button feedback
