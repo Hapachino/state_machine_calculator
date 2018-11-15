@@ -6,24 +6,18 @@ const states = {
   start(input) {
     switch(model.inputType) {
       case '0':
-        model.result = '0';
         break;
       case 'non-zero digit':
-        model.result = input;
-        model.state = states.integer;
+
         break;
       case '.':
-        model.result = input;
-        model.state = states.float;
+
         break;
       case 'operator':
-        model.operator = input;
-        model.operand = model.result;
-        model.state = states.compute;
+
         break;
       case '=':
-        if (!calculate(model.operator)) return;
-        model.state = states.start;
+
         break;
     }
   },
@@ -31,24 +25,16 @@ const states = {
     switch (model.inputType) {
       case '0':
       case 'non-zero digit':
-        appendDigit(input);
+
         break;
       case '.':
-        appendDigit(input);
-        model.state = states.float;
+
         break;
       case 'operator':
-        model.operator = input;
-        if (model.operand) {
-          debugger;
-          if (!calculate(model.operator)) return;
-        }
-        model.operand = model.result;
-        model.state = states.compute;
+
         break;
       case '=':
-        if (!calculate(model.operator)) return;
-        model.state = states.start;
+
         break;
     }
   },
@@ -56,45 +42,33 @@ const states = {
     switch (model.inputType) {
       case '0':
       case 'non-zero digit':
-        appendDigit(input);
-        break;
+
       case '.':
         break;
       case 'operator':
-        model.operator = input;
-        if (model.operand) {
-          if (!calculate(model.operator)) return;
-        }
-        model.operand = model.result;
-        model.state = states.compute;
+
         break;
       case '=':
-        if (!calculate(model.operator)) return;
-        model.state = states.start;
+
         break;
     }
   }, 
   compute(input) {
     switch (model.inputType) {
       case '0':
-        model.result = '0';
-        model.state = states.start;
+
         break;
       case 'non-zero digit':
-        model.result = input;
-        model.state = states.integer;
+
         break;
       case '.':
-        model.result = input;
-        model.state = states.float;
+
         break;
       case 'operator':
-        model.operator = input;
-        model.operand = model.result;
+
         break;
       case '=':
-        if (!calculate(model.operator)) return;
-        model.state = states.start;
+
         break;
     }
   },
@@ -106,7 +80,6 @@ const model = {
   state: states.start,
   result: 0,
   operator: null,
-  previousOperator: null,
   operand: null,
   inputType: null,
 }
@@ -125,31 +98,15 @@ function calculate(input) {
 
   switch (input) {
     case '+':
-      model.result += model.operand;
       break;
     case '-':
-      model.result += -(model.operand);
       break;
     case '*':
-      model.result *= model.operand;
       break;
     case '/':
-      if (model.result === 0) {
-        model.result = 'Error';
-        model.state = states.error;
-        return false;
-      }
-
-      if (model.state === states.start && model.previousOperator === '/') {
-        model.result = model.result / model.operand;
-      } else {
-        [model.result, model.operand] = [model.operand / model.result, model.result];
-      }
-
       break;
   }
 
-  model.previousOperator = model.operator;
   model.result += '';
   model.operand += '';
 
@@ -184,7 +141,7 @@ function updateModel(input) {
   updateInputType(input);
   model.state(input);
 
-  updateDisplay();
+  
   console.log('result:', model.result);
   console.log('operand:', model.operand);
 }
@@ -208,9 +165,5 @@ function updateDisplay() {
 }
 
 // TODO:
-// divide then times
-// multiple equal after times
-// multiple equal after divide
-// refactor calculate after operator 
 // overflow - change max display based on screen width
 // button feedback
