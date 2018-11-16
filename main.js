@@ -1,6 +1,5 @@
-$(document).ready(addButtonHandlers);
+$(document).ready(init);
 
-const operators = '+-*/';
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
 
@@ -86,15 +85,22 @@ const states = {
     }
   },
   error() {
-  }
+  }, 
 }
 
 const model = {
-  state: states.equal,
-  accumulator: 0,
-  operand: 0,
-  operator: null,
-  inputType: null,
+  reset() {
+    this.state = states.equal;
+    this.accumulator = 0;
+    this.operand = 0;
+    this.operator = null;
+    this.inputType = null;
+  },
+}
+
+function init() {
+  model.reset();
+  addButtonHandlers();
 }
 
 function ExceedMaxDisplayWidth(number) {
@@ -112,42 +118,28 @@ function calculate() {
 
   switch (model.operator) {
     case '+':
-      model.accumulator += model.operand;
-      break;
+      return model.accumulator += model.operand;
     case '-':
-      model.accumulator -= model.operand;
-      break;
+      return model.accumulator -= model.operand;
     case '*':
-      model.accumulator *= model.operand;
-      break;
+      return model.accumulator *= model.operand;
     case '/':
-      if (model.operand === 0) {
-        model.state = states.error;
-        return;
-      }
-
-      model.accumulator /= model.operand;
-      break;
+      return model.operand === 0 ? model.state = states.error : model.accumulator /= model.operand;
   }
 }
 
 function addButtonHandlers() {
   $('.button').click((e) => {
     const target = $(e.currentTarget);
-    const isOperator = target.hasClass('operator');
-    const input = isOperator ? target.attr('data-key') : target.find('.center').text();
+    const input = target.hasClass('operator') ? target.attr('data-key') : target.find('.center').text();
 
     updateModel(input);
   })
 }
 
 function updateModel(input) {
-  debugger;
   if (input === 'c') {
-    model.state = states.equal;
-    model.accumulator = 0;
-    model.operand = 0;
-    model.operator = null;
+    model.reset();
   } else if (input === 'ce') {
     model.operand = 0;
     model.state = states.operand;
@@ -162,7 +154,7 @@ function updateModel(input) {
 function updateInputType(input) {
   if (input.match(/[1-9]/)) {
     model.inputType = '[1-9]';
-  } else if (operators.includes(input)) {
+  } else if ('+-*/'.includes(input)) {
     model.inputType = '[+-*/]';
   } else {
     model.inputType = input;
@@ -174,10 +166,6 @@ function toExponential(number, fraction) {
 }
 
 function updateDisplay() {
-  if (ExceedMaxDisplayWidth(model.accumulator)) {
-    model.accumulator = toExponential(model.accumulator, FRACTION);
-  }
-
   let output;
 
   if (model.state === states.error) {
@@ -185,6 +173,8 @@ function updateDisplay() {
   } else {
     output = model.state === states.operand ? model.operand : model.accumulator;
   }
+
+  if (ExceedMaxDisplayWidth(output)) output = toExponential(output, FRACTION);
 
   $('.display-container').text(output);
 }
