@@ -1,6 +1,9 @@
 $(document).ready(addButtonHandlers);
 
-const operators = '+-*/';
+class Calculator {
+
+}
+
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
 
@@ -32,7 +35,7 @@ const states = {
         model.accumulator += input;
         break;
       case '.':
-        if (canAppend(model.accumulator)) model.accumulator += input;
+        if (canAppendInput(model.accumulator)) model.accumulator += input;
         break;
       case '[+-*/]':
         model.operator = input;
@@ -71,7 +74,7 @@ const states = {
         model.operand ? model.operand += input : model.operand = input;
         break;
       case '.':
-        if (canAppend(model.operand)) model.operand += input;
+        if (canAppendInput(model.operand)) model.operand += input;
         break;
       case '[+-*/]':
         model.state = states.operator;
@@ -99,10 +102,11 @@ const model = {
 
 function ExceedMaxDisplayWidth(number) {
   const string = number + '';
+
   return string.length >= MAX_DISPLAY_LENGTH;
 }
 
-function canAppend(number) {
+function canAppendInput(number) {
   return !ExceedMaxDisplayWidth(number) && !number.includes('.');
 }
 
@@ -123,37 +127,39 @@ function calculate() {
     case '/':
       if (model.operand === 0) {
         model.state = states.error;
-        return;
+      } else {
+        model.accumulator /= model.operand;
       }
-
-      model.accumulator /= model.operand;
       break;
   }
 }
 
 function addButtonHandlers() {
-  $('.button').click((e) => {
-    const target = $(e.currentTarget);
-    const isOperator = target.hasClass('operator');
-    const input = isOperator ? target.attr('data-key') : target.find('.center').text();
+  $('.button').click(e => {
+    const button = $(e.currentTarget);
+    const isOperator = button.hasClass('operator');
+    const input = isOperator ? button.attr('data-key') : button.find('.center').text();
 
     updateModel(input);
   })
 }
 
 function updateModel(input) {
-  debugger;
-  if (input === 'c') {
-    model.state = states.equal;
-    model.accumulator = 0;
-    model.operand = 0;
-    model.operator = null;
-  } else if (input === 'ce') {
-    model.operand = 0;
-    model.state = states.operand;
-  } else {
-    updateInputType(input);
-    model.state(input);
+  switch(input) {
+    case 'c':
+      model.state = states.equal;
+      model.accumulator = 0;
+      model.operand = 0;
+      model.operator = null;
+      break;
+    case 'ce':
+      model.operand = 0;
+      model.state = states.operand;
+      break;
+    default:
+      updateInputType(input);
+      model.state(input);
+      break;
   }
 
   updateDisplay();
@@ -162,20 +168,20 @@ function updateModel(input) {
 function updateInputType(input) {
   if (input.match(/[1-9]/)) {
     model.inputType = '[1-9]';
-  } else if (operators.includes(input)) {
+  } else if ('+-*/'.includes(input)) {
     model.inputType = '[+-*/]';
   } else {
     model.inputType = input;
   }
 }
 
-function toExponential(number, fraction) {
+function exponentialFormat(number, fraction) {
   return Number.parseFloat(number).toExponential(fraction);
 }
 
 function updateDisplay() {
   if (ExceedMaxDisplayWidth(model.accumulator)) {
-    model.accumulator = toExponential(model.accumulator, FRACTION);
+    model.accumulator = exponentialFormat(model.accumulator, FRACTION);
   }
 
   let output;
@@ -191,5 +197,9 @@ function updateDisplay() {
 
 // TODO:
 // handle infinity
-// overflow - change max display based on screen width
-// graphing
+// OOP
+// add test 
+// add history
+// fancy background
+// button hover effect
+// adjust max display width for mobile - breakpoints
