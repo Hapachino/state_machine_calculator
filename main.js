@@ -1,4 +1,4 @@
-$(document).ready(addButtonHandlers);
+$(document).ready(init);
 
 class Calculator {
 
@@ -89,15 +89,22 @@ const states = {
     }
   },
   error() {
-  }
+  }, 
 }
 
 const model = {
-  state: states.equal,
-  accumulator: 0,
-  operand: 0,
-  operator: null,
-  inputType: null,
+  reset() {
+    this.state = states.equal;
+    this.accumulator = 0;
+    this.operand = 0;
+    this.operator = null;
+    this.inputType = null;
+  },
+}
+
+function init() {
+  model.reset();
+  addButtonHandlers();
 }
 
 function ExceedMaxDisplayWidth(number) {
@@ -125,11 +132,7 @@ function calculate() {
       model.accumulator *= model.operand;
       break;
     case '/':
-      if (model.operand === 0) {
-        model.state = states.error;
-      } else {
-        model.accumulator /= model.operand;
-      }
+      model.operand === 0 ? model.state = states.error : model.accumulator /= model.operand;
       break;
   }
 }
@@ -180,16 +183,16 @@ function exponentialFormat(number, fraction) {
 }
 
 function updateDisplay() {
-  if (ExceedMaxDisplayWidth(model.accumulator)) {
-    model.accumulator = exponentialFormat(model.accumulator, FRACTION);
-  }
-
   let output;
 
   if (model.state === states.error) {
     output = 'ERROR';
   } else {
     output = model.state === states.operand ? model.operand : model.accumulator;
+  }
+
+  if (ExceedMaxDisplayWidth(output)) {
+    output = exponentialFormat(output, FRACTION);
   }
 
   $('.display-container').text(output);
