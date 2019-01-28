@@ -1,9 +1,5 @@
 $(document).ready(init);
 
-class Calculator {
-
-}
-
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
 
@@ -89,6 +85,7 @@ const states = {
     }
   },
   error() {
+    // For future error handling
   }, 
 }
 
@@ -178,7 +175,7 @@ function updateInputType(input) {
   }
 }
 
-function exponentialFormat(number, fraction) {
+function toExponentialFormat(number, fraction) {
   return Number.parseFloat(number).toExponential(fraction);
 }
 
@@ -192,17 +189,13 @@ function updateDisplay() {
   }
 
   if (ExceedMaxDisplayWidth(output)) {
-    output = exponentialFormat(output, FRACTION);
+    output = toExponentialFormat(output, FRACTION);
   }
 
   $('.display-container').text(output);
 }
 
 // TODO:
-// handle infinity
-// OOP
-// add test 
+// add self-testing
 // add history
-// fancy background
-// button hover effect
-// adjust max display width for mobile - breakpoints
+// background

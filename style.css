@@ -83,6 +83,7 @@ body {
 
 .button:hover {
   cursor: pointer;
+  filter: brightness(120%);
 }
 
 [data-key=c], [data-key=ce] {
