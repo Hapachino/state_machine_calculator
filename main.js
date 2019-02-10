@@ -141,7 +141,7 @@ function addButtonHandlers() {
     const input = isOperator ? button.attr('data-key') : button.find('.center').text();
 
     updateModel(input);
-  })
+  });
 }
 
 function updateModel(input) {
@@ -195,7 +195,12 @@ function updateDisplay() {
   $('.display-container').text(output);
 }
 
-// TODO:
-// add self-testing
-// add history
-// background
+// simulates keys being pressed
+
+// test cases
+
+// start testing
+
+// validates actual vs expected output
+
+// TODO: add js doc comments
