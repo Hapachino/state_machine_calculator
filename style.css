@@ -1,6 +1,6 @@
 :root {
   --display-height: 20%;
-  --test-height: 20%;
+  --test-height: 25%;
   --display-font-size: 7vh;
   --border: 4px solid lightgrey;
   --border-radius: 7.5px;
@@ -36,7 +36,7 @@ body {
   position: absolute;
   top: 50%;
   transform: translate(0, -50%);
-  height: 60vh;
+  height: 80vh;
   border: var(--border);
   border-radius: var(--border-radius);
   background-color: var(--calculator-background);
@@ -65,16 +65,6 @@ body {
   height: calc(100% - var(--display-height) - var(--test-height));
 }
 
-.test-container {
-  height: var(--test-height);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  background-color: black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .buttons-container > * {
   height: 100%;
   background-color: var(--calculator-background);
@@ -97,9 +87,35 @@ body {
   filter: brightness(120%);
 }
 
-#self-test {
+.test.container {
+  height: var(--test-height);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.test.btn {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.test.display {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: none;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.test.display * {
+  font-size: 2rem;
+  color: white;
+  margin: 0;
 }
 
 [data-key=c], [data-key=ce] {
