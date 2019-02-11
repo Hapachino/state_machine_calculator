@@ -136,9 +136,7 @@ function calculate() {
 
 function addButtonHandlers() {
   $('.button').click(e => {
-    const button = $(e.currentTarget);
-    const isOperator = button.hasClass('operator');
-    const input = isOperator ? button.attr('data-key') : button.find('.center').text();
+    const input = $(e.currentTarget).attr('data-key');
 
     updateModel(input);
   });
@@ -195,12 +193,25 @@ function updateDisplay() {
   $('.display-container').text(output);
 }
 
-// simulates keys being pressed
+function SimulateKeyPress(input, duration, activeDuration = 250) {
+  const button = $(`[data-key=${input}]`);
 
-// test cases
+  button.addClass('hover');
+  setTimeout(() => {
+    button.removeClass('hover');
 
-// start testing
+    button.addClass('active');
 
-// validates actual vs expected output
+    setTimeout(() => {
+      button.removeClass('active');
+    }, activeDuration);
+  }, duration - activeDuration);
+}
+
+function selfTest(testCase) {
+  
+}
+
+// validates output and displays
 
 // TODO: add js doc comments
