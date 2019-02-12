@@ -6,12 +6,12 @@ const testCases = [
   },
   {
     name: 'Multiplication',
-    input: '1×2=',
+    input: '1*2=',
     output: 2,
   },
   {
     name: 'Division',
-    input: '1÷2=',
+    input: '1/2=',
     output: 0.5,
   },
   {

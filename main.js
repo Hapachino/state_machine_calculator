@@ -212,10 +212,6 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
-function wait(duration) {
-  return new Promise(resolve => setTimeout(resolve, duration));
-} 
-
 function runTestCase(testCase) {
   const { name, input, output } = testCase;
 
@@ -223,19 +219,21 @@ function runTestCase(testCase) {
   $('.test.input').text(input);
   $('.test.output').text(`Expected Output: ${output}`);
 
-  (async () => {
-    for (let key of input) {
-      SimulateKeyPress(key, TEST_INTERVAL);
+  let i = 0;
+  const length = input.length;
 
-      await wait(TEST_INTERVAL);
+  const timerId = setInterval(() => {
+    // SimulateKeyPress(input[i], TEST_INTERVAL);
+    updateModel(input[i]);
 
-      updateModel(key);
+    if (++i === length) {
+      clearInterval(timerId);
+
+      $('.test.input').append(model.accumulator);
+
+      return model.accumulator === output;
     }
-
-    $('.test.input').append(model.accumulator);
-
-    return new Promise(resolve => resolve(model.accumulator === output));
-  })();
+  }, TEST_INTERVAL);
 }
 
 function runSelfTest(testCases) {
