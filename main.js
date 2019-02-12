@@ -225,7 +225,7 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
-function runSelfTest(testCases) {
+function runSelfTest(testCases, interval) {
   let testCaseIndex = inputIndex = 0;
 
   const timerId = setInterval(() => {
@@ -244,8 +244,10 @@ function runSelfTest(testCases) {
     }
 
     const key = translateKey(testCases[testCaseIndex].input[inputIndex++]);
-    console.log(key);
+    
     updateModel(key);
+
+    SimulateKeyPress(key, interval);
 
     if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
@@ -261,7 +263,7 @@ function runSelfTest(testCases) {
 
       model.reset();
     }
-  }, TEST_INTERVAL);
+  }, interval);
 }
 
 // validates output and displays
