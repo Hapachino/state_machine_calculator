@@ -195,6 +195,19 @@ function updateDisplay() {
   $('.display-container').text(output);
 }
 
+function translateKey(key) {
+  const charCode = key.charCodeAt(0);
+
+  switch(charCode) {
+    case 215:
+      return '*';
+    case 247:
+      return '/';
+  }
+
+  return key;
+}
+
 // Self-testing Functions
 
 function SimulateKeyPress(input, duration, activeDuration = 250) {
@@ -212,43 +225,43 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
-function runTestCase(testCase) {
-  const { name, input, output } = testCase;
-
-  $('.test.name').text(name);
-  $('.test.input').text(input);
-  $('.test.output').text(`Expected Output: ${output}`);
-
-  let i = 0;
-  const length = input.length;
+function runSelfTest(testCases) {
+  let testCaseIndex = inputIndex = 0;
 
   const timerId = setInterval(() => {
-    // SimulateKeyPress(input[i], TEST_INTERVAL);
-    updateModel(input[i]);
-
-    if (++i === length) {
+    if (testCaseIndex === testCases.length) {
       clearInterval(timerId);
+      // display final results
+      return;
+    }
 
+    if (inputIndex === 0) {
+      const { name, input, output } = testCases[testCaseIndex];
+      $('.test.name').text(name);
+      $('.test.input').text(input);
+      $('.test.output').text(`Expected Output: ${output}`);
+      $('.test.result').text('');
+    }
+
+    const key = translateKey(testCases[testCaseIndex].input[inputIndex++]);
+    console.log(key);
+    updateModel(key);
+
+    if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
 
-      return model.accumulator === output;
-    }
-  }, TEST_INTERVAL);
-}
-
-function runSelfTest(testCases) {
-  (async () => {
-    for (let testCase of testCases) {
-      const match = await runTestCase(testCase);
-      const result = match ? 'pass' : 'fail';
+      const result = model.accumulator === testCases[testCaseIndex].output ? 'pass' : 'fail';
 
       $('.test.result').text(result);
 
-      if (!match) break;
+      // increment failed test case number, store?
 
-      wait(WAIT_INTERVAL);
+      testCaseIndex++;
+      inputIndex = 0;
+
+      model.reset();
     }
-  })();
+  }, TEST_INTERVAL);
 }
 
 // validates output and displays
