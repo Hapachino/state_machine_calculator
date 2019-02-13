@@ -100,6 +100,7 @@ body {
 .test.btn {
   padding-left: 1rem;
   padding-right: 1rem;
+  font-size: 2rem;
 }
 
 .test.display {
@@ -136,6 +137,14 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.glyphicon-ok {
+  color: green !important;
+}
+
+.glyphicon-remove {
+  color: red !important;
 }
 
 @media only screen and (max-width: 600px) {

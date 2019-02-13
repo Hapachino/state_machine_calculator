@@ -2,6 +2,7 @@ $(document).ready(init);
 
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
+const TEST_INTERVAL = 150;
 
 const states = {
   equal(input) {
@@ -101,7 +102,12 @@ const model = {
 
 function init() {
   model.reset();
+  addClickHandlers();
+}
+
+function addClickHandlers() {
   addButtonHandlers();
+  addSelfTestClickHandler();
 }
 
 function ExceedMaxDisplayWidth(number) {
@@ -193,8 +199,30 @@ function updateDisplay() {
   $('.display-container').text(output);
 }
 
-function SimulateKeyPress(input, duration, activeDuration = 250) {
-  const button = $(`[data-key=${input}]`);
+function translateKey(key) {
+  switch(key) {
+    case '×':
+      return '*';
+    case '÷':
+      return '/';
+  }
+
+  return key;
+}
+
+// Self-testing Functions
+
+function addSelfTestClickHandler() {
+  $('.test.btn').click(() => {
+    $('.test.btn').hide();
+    $('.test.display').css('display', 'flex');
+    runSelfTest(testCases, TEST_INTERVAL);
+  })
+}
+
+function SimulateKeyPress(input, duration) {
+  const button = $(`[data-key='${input}']`);
+  const activeDuration = duration / 5;
 
   button.addClass('hover');
   setTimeout(() => {
@@ -208,8 +236,55 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
-function selfTest(testCase) {
-  
+function runSelfTest(testCases, interval) {
+  let testCaseIndex = inputIndex = 0;
+  let clickButton = true;
+  const halfInterval = interval / 2; // for alternating between button click and input
+
+  const timerId = setInterval(async () => {
+    if (testCaseIndex === testCases.length) {
+      clearInterval(timerId);
+      // display final results
+      return;
+    }
+    
+    if (inputIndex === 0) {
+      const { name, input, output } = testCases[testCaseIndex];
+      $('.test.name').text(name);
+      $('.test.input').text(input);
+      $('.test.output').text(`Expected Output: ${output}`);
+      $('.test.result').text('');
+    }
+
+    const key = translateKey(testCases[testCaseIndex].input[inputIndex]);
+
+    if (clickButton) {
+      SimulateKeyPress(key, halfInterval);
+    } else {
+      updateModel(key);
+
+      inputIndex++;
+    }
+
+    clickButton = !clickButton;
+
+    if (inputIndex === testCases[testCaseIndex].input.length) {
+      $('.test.input').append(model.accumulator);
+
+      const result = model.accumulator === testCases[testCaseIndex].output ? 
+        'ok' : 
+        'remove';
+
+      $('.test.result').html(`<i class="glyphicon glyphicon-${result}"></i>`);
+
+      // increment failed test case number, store?
+
+      testCaseIndex++;
+      inputIndex = 0;
+
+      model.reset();
+    }
+  }, halfInterval);
 }
 
 // validates output and displays
