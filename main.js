@@ -2,7 +2,7 @@ $(document).ready(init);
 
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
-const TEST_INTERVAL = 500;
+const TEST_INTERVAL = 150;
 
 const states = {
   equal(input) {
@@ -200,12 +200,10 @@ function updateDisplay() {
 }
 
 function translateKey(key) {
-  const charCode = key.charCodeAt(0);
-
-  switch(charCode) {
-    case 215:
+  switch(key) {
+    case '×':
       return '*';
-    case 247:
+    case '÷':
       return '/';
   }
 
@@ -222,8 +220,9 @@ function addSelfTestClickHandler() {
   })
 }
 
-function SimulateKeyPress(input, duration, activeDuration = 250) {
+function SimulateKeyPress(input, duration) {
   const button = $(`[data-key='${input}']`);
+  const activeDuration = duration / 5;
 
   button.addClass('hover');
   setTimeout(() => {
@@ -237,24 +236,10 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
-// function SimulateKeyPress(input, duration) {
-//   const button = $(`[data-key='${input}']`);
-
-//   button.addClass('hover');
-
-//   setTimeout(() => {
-//     button.removeClass('hover');
-//   }, duration);
-// }
-
-function wait(duration) {
-  return new Promise(resolve => setTimeout(resolve, duration));
-} 
-
 function runSelfTest(testCases, interval) {
   let testCaseIndex = inputIndex = 0;
   let clickButton = true;
-  const halfInterval = interval / 2;
+  const halfInterval = interval / 2; // for alternating between button click and input
 
   const timerId = setInterval(async () => {
     if (testCaseIndex === testCases.length) {
@@ -281,7 +266,7 @@ function runSelfTest(testCases, interval) {
       inputIndex++;
     }
 
-    // await wait(interval);
+    clickButton = !clickButton;
 
     if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
@@ -297,8 +282,6 @@ function runSelfTest(testCases, interval) {
 
       model.reset();
     }
-
-    clickButton = !clickButton;
   }, halfInterval);
 }
 
