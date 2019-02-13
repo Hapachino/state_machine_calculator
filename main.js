@@ -271,9 +271,11 @@ function runSelfTest(testCases, interval) {
     if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
 
-      const result = model.accumulator === testCases[testCaseIndex].output ? 'pass' : 'fail';
+      const result = model.accumulator === testCases[testCaseIndex].output ? 
+        'ok' : 
+        'remove';
 
-      $('.test.result').text(result);
+      $('.test.result').html(`<i class="glyphicon glyphicon-${result}"></i>`);
 
       // increment failed test case number, store?
 
