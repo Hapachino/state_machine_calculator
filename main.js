@@ -103,7 +103,12 @@ const model = {
 
 function init() {
   model.reset();
+  addClickHandlers();
+}
+
+function addClickHandlers() {
   addButtonHandlers();
+  addSelfTestClickHandler();
 }
 
 function ExceedMaxDisplayWidth(number) {
@@ -210,6 +215,14 @@ function translateKey(key) {
 
 // Self-testing Functions
 
+function addSelfTestClickHandler() {
+  $('.test.btn').click(() => {
+    $('.test.btn').hide();
+    $('.test.display').css('display', 'flex');
+    runSelfTest(testCases, TEST_INTERVAL);
+  })
+}
+
 function SimulateKeyPress(input, duration, activeDuration = 250) {
   const button = $(`[data-key='${input}']`);
 
@@ -225,10 +238,24 @@ function SimulateKeyPress(input, duration, activeDuration = 250) {
   }, duration - activeDuration);
 }
 
+// function SimulateKeyPress(input, duration) {
+//   const button = $(`[data-key='${input}']`);
+
+//   button.addClass('hover');
+
+//   setTimeout(() => {
+//     button.removeClass('hover');
+//   }, duration);
+// }
+
+function wait(duration) {
+  return new Promise(resolve => setTimeout(resolve, duration));
+} 
+
 function runSelfTest(testCases, interval) {
   let testCaseIndex = inputIndex = 0;
 
-  const timerId = setInterval(() => {
+  const timerId = setInterval(async () => {
     if (testCaseIndex === testCases.length) {
       clearInterval(timerId);
       // display final results
@@ -245,9 +272,11 @@ function runSelfTest(testCases, interval) {
 
     const key = translateKey(testCases[testCaseIndex].input[inputIndex++]);
     
-    updateModel(key);
-
     SimulateKeyPress(key, interval);
+
+    // await wait(interval);
+
+    updateModel(key);
 
     if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
