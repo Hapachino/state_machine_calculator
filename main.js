@@ -3,7 +3,6 @@ $(document).ready(init);
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
 const TEST_INTERVAL = 500;
-const WAIT_INTERVAL = 5000;
 
 const states = {
   equal(input) {
@@ -254,6 +253,8 @@ function wait(duration) {
 
 function runSelfTest(testCases, interval) {
   let testCaseIndex = inputIndex = 0;
+  let clickButton = true;
+  const halfInterval = interval / 2;
 
   const timerId = setInterval(async () => {
     if (testCaseIndex === testCases.length) {
@@ -261,7 +262,7 @@ function runSelfTest(testCases, interval) {
       // display final results
       return;
     }
-
+    
     if (inputIndex === 0) {
       const { name, input, output } = testCases[testCaseIndex];
       $('.test.name').text(name);
@@ -270,13 +271,17 @@ function runSelfTest(testCases, interval) {
       $('.test.result').text('');
     }
 
-    const key = translateKey(testCases[testCaseIndex].input[inputIndex++]);
-    
-    SimulateKeyPress(key, interval);
+    const key = translateKey(testCases[testCaseIndex].input[inputIndex]);
+
+    if (clickButton) {
+      SimulateKeyPress(key, halfInterval);
+    } else {
+      updateModel(key);
+
+      inputIndex++;
+    }
 
     // await wait(interval);
-
-    updateModel(key);
 
     if (inputIndex === testCases[testCaseIndex].input.length) {
       $('.test.input').append(model.accumulator);
@@ -292,7 +297,9 @@ function runSelfTest(testCases, interval) {
 
       model.reset();
     }
-  }, interval);
+
+    clickButton = !clickButton;
+  }, halfInterval);
 }
 
 // validates output and displays
