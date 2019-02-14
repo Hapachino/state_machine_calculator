@@ -255,7 +255,7 @@ function runSelfTest(testCases, interval) {
       $('.passed').text(passed);
       $('.failed').text(failed);
  
-      if (!failedOperations) {
+      if (!failed) {
         $('.failed-operations').text('All Tests Passed');
       } else {
         $('.failed-operations').append(failedOperations.slice(0, -2));
