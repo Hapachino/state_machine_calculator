@@ -2,7 +2,7 @@ $(document).ready(init);
 
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
-const TEST_INTERVAL = 200;
+const TEST_INTERVAL = 300;
 
 const states = {
   equal(input) {
@@ -216,6 +216,8 @@ function addSelfTestClickHandler() {
   $('.test.btn').click(() => {
     $('.test.btn').hide();
     $('.test.display').css('display', 'flex');
+    $('.results.display').css('display', 'flex');
+    $('.failed-operations').text('Failed Operations: ');
 
     runSelfTest(testCases, TEST_INTERVAL);
   })
@@ -294,10 +296,10 @@ function runSelfTest(testCases, interval) {
 
       if (display == testCase.output) {
         result = 'ok';
-        passed++;
+        $('.passed').text(++passed);
       } else {
         result = 'remove';
-        failed++;
+        $('.failed').text(++failed);
 
         failedOperations += `${name}, `;
       }
