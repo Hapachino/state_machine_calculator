@@ -46,14 +46,31 @@
     </div>
 
     <div class="test container col-xs-12">
-      <button class="test btn btn-default">Self Test</button>
       <div class="test display">
         <div class="test name"></div>
-        <div>
+        <div class="test calculation">
           <span class="test input"></span> <span class="test result"></span>
         </div>
         <div class="test output"></div>
       </div>
+
+      <div class="results display">
+        <div class="results counts">
+          <i class="glyphicon glyphicon-ok"></i> 
+          <span class="passed"></span>
+
+          <i class="glyphicon glyphicon-remove"></i>
+          <span class="failed"></span>
+        </div>
+
+        <div>
+          <span class="failed-operations">Failed Operations: </span>
+        </div>
+
+        <button class="retest test btn btn-default">Self Test</button>
+      </div>
+
+      <button class="test btn btn-default">Self Test</button>
     </div>
 
   </div>

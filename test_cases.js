@@ -81,7 +81,7 @@ const testCases = [
   },
   {
     name: 'Missing Operands',
-    input: '====',
+    input: '====0',
     output: 0,
   },
 ];
