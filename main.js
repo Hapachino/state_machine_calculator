@@ -2,7 +2,7 @@ $(document).ready(init);
 
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
-const TEST_INTERVAL = 300;
+const TEST_INTERVAL = 20;
 
 const states = {
   equal(input) {
