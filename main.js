@@ -2,7 +2,7 @@ $(document).ready(init);
 
 const MAX_DISPLAY_LENGTH = 10;
 const FRACTION = 6;
-const TEST_INTERVAL = 150;
+const TEST_INTERVAL = 200;
 
 const states = {
   equal(input) {
@@ -216,6 +216,7 @@ function addSelfTestClickHandler() {
   $('.test.btn').click(() => {
     $('.test.btn').hide();
     $('.test.display').css('display', 'flex');
+
     runSelfTest(testCases, TEST_INTERVAL);
   })
 }
@@ -237,26 +238,43 @@ function SimulateKeyPress(input, duration) {
 }
 
 function runSelfTest(testCases, interval) {
+  const halfInterval = interval / 2; // for alternating between button click and input
   let testCaseIndex = inputIndex = 0;
   let clickButton = true;
-  const halfInterval = interval / 2; // for alternating between button click and input
+  let passed = failed = 0;
+  let failedOperations = '';
 
-  const timerId = setInterval(async () => {
+  const timerId = setInterval(() => {
     if (testCaseIndex === testCases.length) {
       clearInterval(timerId);
-      // display final results
+      
+      $('.passed').text(passed);
+      $('.failed').text(failed);
+ 
+      if (!failedOperations) {
+        $('.failed-operations').text('All Tests Passed');
+      } else {
+        $('.failed-operations').append(failedOperations.slice(0, -2));
+      }
+
+      $('.test.display').hide();
+      $('.results.display').css('display', 'flex');
+      $('.retest').show();
+
       return;
     }
+
+    const testCase = testCases[testCaseIndex];
+    const { name, input, output } = testCase;
     
     if (inputIndex === 0) {
-      const { name, input, output } = testCases[testCaseIndex];
       $('.test.name').text(name);
       $('.test.input').text(input);
       $('.test.output').text(`Expected Output: ${output}`);
       $('.test.result').text('');
     }
 
-    const key = translateKey(testCases[testCaseIndex].input[inputIndex]);
+    const key = translateKey(testCase.input[inputIndex]);
 
     if (clickButton) {
       SimulateKeyPress(key, halfInterval);
@@ -267,17 +285,24 @@ function runSelfTest(testCases, interval) {
     }
 
     clickButton = !clickButton;
+    const display = $('.display-container').text();
 
-    if (inputIndex === testCases[testCaseIndex].input.length) {
-      $('.test.input').append(model.accumulator);
+    if (inputIndex === testCase.input.length) {
+      $('.test.input').append(display);
 
-      const result = model.accumulator === testCases[testCaseIndex].output ? 
-        'ok' : 
-        'remove';
+      let result;
+
+      if (display == testCase.output) {
+        result = 'ok';
+        passed++;
+      } else {
+        result = 'remove';
+        failed++;
+
+        failedOperations += `${name}, `;
+      }
 
       $('.test.result').html(`<i class="glyphicon glyphicon-${result}"></i>`);
-
-      // increment failed test case number, store?
 
       testCaseIndex++;
       inputIndex = 0;
@@ -286,7 +311,5 @@ function runSelfTest(testCases, interval) {
     }
   }, halfInterval);
 }
-
-// validates output and displays
 
 // TODO: add js doc comments

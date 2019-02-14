@@ -97,10 +97,21 @@ body {
   align-items: center;
 }
 
-.test.btn {
+.test.btn.btn-default {
   padding-left: 1rem;
   padding-right: 1rem;
   font-size: 2rem;
+  color: black;
+}
+
+.results.display {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: none;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .test.display {
@@ -113,7 +124,7 @@ body {
   align-items: center;
 }
 
-.test.display * {
+.test.display *, .results.display * {
   font-size: 2rem;
   color: white;
   margin: 0;
@@ -137,6 +148,16 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.results.counts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results.counts * {
+  margin: 0 0.5rem;
 }
 
 .glyphicon-ok {
