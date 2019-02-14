@@ -217,7 +217,9 @@ function addSelfTestClickHandler() {
     $('.test.btn').hide();
     $('.test.display').css('display', 'flex');
     $('.results.display').css('display', 'flex');
-    $('.failed-operations').text('Failed Operations: ');
+    $('.failed-operations').text('');
+    $('.passed').text('0');
+    $('.failed').text('0');
 
     runSelfTest(testCases, TEST_INTERVAL);
   })
@@ -244,7 +246,7 @@ function runSelfTest(testCases, interval) {
   let testCaseIndex = inputIndex = 0;
   let clickButton = true;
   let passed = failed = 0;
-  let failedOperations = '';
+  let failedOperations = 'Failed Operations: ';
 
   const timerId = setInterval(() => {
     if (testCaseIndex === testCases.length) {
